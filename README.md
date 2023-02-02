@@ -279,7 +279,7 @@ test('Test stream eventA - walking through directories by feeding stream event;'
   } );
 ```
 
-### io.yamlconfig.dart
+### io.yamlconfig.dart [yaml-test]
 
 #### YamlConfig
 
@@ -294,3 +294,4 @@ test('Test stream eventA - walking through directories by feeding stream event;'
 [fileio-test]: ./test/fileio.test.dart
 [watch-test]: ./test/watchServer.test.dart
 [path-test]: ./test/tempPath.test.dart
+[yaml-test]: ./test/io.yamlconfig.test.dart
