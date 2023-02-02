@@ -1,0 +1,23 @@
+name: vuedart_transformer_setting
+## all data within variables can be referenced via $"dollar sign"
+variables:
+  components: ../../lib/src/components/**
+  layout    : ../../lib/src/layout/**
+  assets    : ../../lib/src/assets
+  modules   : ../../lib/src/lib
+  finalized : ../../lib/src/components/uiState/**
+  ignored   : ../../lib/src/store/**
+  source    : ../../lib/src
+  com       : $source/com/**
+settings:
+  recursive: true
+  folders:
+    source    : [../../lib/src, $com]
+    components: [$components]
+    layout    : [$layout ]
+    static    : [$assets ]
+  ignored_folders:
+    finalized : [$finalized ]
+    ignored   : [$ignored ]
+    others    : ['./src/assets/static/**' ]
+  file_pattern: [ '*.vue', '*.dart']

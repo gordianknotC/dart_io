@@ -1,0 +1,22 @@
+name: IO
+description: A starting point for Dart libraries or applications.
+# version: 1.0.0
+# homepage: https://www.example.com
+# author: gordianknot <email@example.com>
+
+environment:
+  sdk: '>=2.1.0 <3.0.0'
+
+dependencies:
+  quiver: 2.0.0+1  #collection utilities
+  path: 1.6.2    #file system path
+  yaml: 2.1.15   #yaml
+  archive: 2.0.4    #compression utility
+  tripledes: ^2.1.0    #encryption / decryption
+  http_server: 0.9.8    #simple http server
+  rxdart: 0.22.0     #stream controller 0.20.0...
+  common:
+    path: ../common
+
+dev_dependencies:
+  test: ^1.0.0

@@ -1,0 +1,32 @@
+{
+   "name": "vuedart_transformer_setting",
+   "variables": {
+      "modules": "./src/lib",
+      "assets": "./src/assets",
+      "layout": "./src/layout",
+      "finalized": "./src/components/uiState",
+      "components": "./src/components"
+   },
+   "settings": {
+      "folders": {
+         "layout": [
+            "./src/layout"
+         ],
+         "components": [
+            "./src/components"
+         ],
+         "static": [
+            "./src/assets"
+         ]
+      },
+      "file_pattern": [
+         "*.vue",
+         "*.dart"
+      ],
+      "ignored_folders": {
+         "finalized": [
+            "./src/components/uiState"
+         ]
+      }
+   }
+}

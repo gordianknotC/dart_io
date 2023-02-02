@@ -1,0 +1,17 @@
+name: vuedart_transformer_setting
+## all data within variables can be referenced via $"dollar sign"
+variables:
+  components: ./components/**
+  assets    : ./assets
+  wfolder   : ./watchedFolder
+  sub       : ./watchedFolder/subFolder
+settings:
+  recursive: true
+  folders:
+    sub       : [$sub]
+    components: [$components]
+    watch     : [$wfolder]
+    assets    : [assets]
+  ignored_folders:
+    ignored   : [$wfolder/subFolder/**]
+  file_pattern: [ '*.vue', '*.dart', '*.txt']
