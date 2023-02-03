@@ -5,7 +5,7 @@ import 'package:test/test.dart';
 import 'package:IO/src/io.cmd.dart';
 
 void TestCase_ShellTest() {
-   Shell shell;
+   late Shell shell;
    
    group('Test Shell and CommonEnv', (){
       setUp((){

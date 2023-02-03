@@ -1,17 +1,21 @@
 import 'dart:io' show Directory, File, FileSystemEntity, FileSystemEvent, Platform;
 import 'dart:async' show Completer, StreamTransformer, EventSink, StreamSubscription;
 
-
+import 'package:IO/src/io.dart';
 import 'package:meta/meta.dart';
 import 'package:path/path.dart' as _Path;
 
+typedef TWalkContinue   = bool Function({required StreamSubscription subscription, required Directory dir, File? file});
+typedef TWalkCB         = bool Function(Directory root, Directory current, List<FileSystemEntity> filesOrDirs);
+typedef TWatchCB        = bool Function(List<FileSystemEntity> changed_files);
+
 
 abstract class TFileSystemEntity {
-	FileSystemEntity        entity;
-	List<TEntity>           files ;
-	List<TEntity>           dirs  ;
-	String                  _label;
-	int                     _level;
+	late FileSystemEntity    entity;
+	List<TFileSystemEntity>?   files ;
+	List<TFileSystemEntity>?   dirs  ;
+	String?                  _label;
+	late int                 _level;
 	String   get label;
 	String   get path        => entity.path;
 	bool     get isFile      => entity is File;
@@ -27,19 +31,19 @@ abstract class TFileSystemEntity {
 	}
 	Iterable<String>
 	get keys {
-		return [files, dirs].expand((x) => x).map((x) =>  x.label);
+		return [files ?? [], dirs ?? []].expand((x) => x).map((x) =>  x.label);
 	}
 	
-	Iterable<TEntity>
+	Iterable<TFileSystemEntity>
 	get values{
-		return [files, dirs].expand((x) => x).map((x) =>  x);
+		return [files ?? [], dirs ?? []].expand((x) => x).map((x) =>  x);
 	}
 	
-	Iterable<MapEntry<String, TEntity>>
+	Iterable<MapEntry<String, TFileSystemEntity>>
 	get mapEntries{
-		return [files, dirs].expand((x) => x).map((x) =>  MapEntry(x.label, x));
+		return [files ?? [], dirs ?? []].expand((x) => x).map((x) =>  MapEntry(x.label, x));
 	}
-	Map<String, TEntity>
+	Map<String, TFileSystemEntity>
 	get asMap {
 		return Map.fromEntries(mapEntries);
 	}
@@ -48,15 +52,15 @@ abstract class TFileSystemEntity {
 	operator [](dynamic labelOrEntity) {
 		if (labelOrEntity is FileSystemEntity){
 			return labelOrEntity is File
-					? files.firstWhere((f) => f.entity == labelOrEntity)
-					: labelOrEntity is Directory
-					? dirs.firstWhere((d) => d.entity == labelOrEntity)
+				? (files ?? []).firstWhere((f) => f.entity == labelOrEntity)
+				: labelOrEntity is Directory
+					? (dirs ?? []).firstWhere((d) => d.entity == labelOrEntity)
 					: (){throw Exception("Unsupported type for indexing");}();
 		} else if (labelOrEntity is String){
 			var sector = labelOrEntity.substring(0, 5) == 'File:'
-					? files
-					: labelOrEntity.substring(0, 10) == 'Directory:'
-					? dirs
+				? (files ?? [])
+				: labelOrEntity.substring(0, 10) == 'Directory:'
+					? (dirs ?? [])
 					: (){throw Exception('Invalid label for indexing on TEntity');}();
 			return sector.firstWhere((f) => f.label == labelOrEntity);
 		}
@@ -64,26 +68,27 @@ abstract class TFileSystemEntity {
 	}
 	add(TFileSystemEntity data){
 		if (data.entity is Directory){
+			assert(dirs != null);
 			data._level = _level + 1;
-			dirs.add(data );
+			dirs!.add(data );
 		}else if (data.entity is File){
+			assert(files != null);
 			data._level = _level;
-			files.add(data );
+			files!.add(data);
 		}
 	}
 	
 	String _toString(int indent){
 		final String TAB = '\t' * indent;
 		final String SUB = '\t' * (indent + 1);
-		
-		var _files = files != null && files.length > 0
-				? files.fold('${SUB}files: ', (String all, TEntity f){
-			return '$all\n${f._toString(indent+2)}';
+		var _files = files != null && files!.length > 0
+				? files!.fold('${SUB}files: ', (String all,  entity){
+			return '$all\n${entity._toString(indent+2)}';
 		})
 				: '';
-		var _dirs = dirs != null && dirs.length > 0
-				? dirs?.fold('${SUB}dirs: ', (String all, TEntity f){
-			return '$all\n${f._toString(indent+2)}';
+		var _dirs = dirs != null && dirs!.length > 0
+				? dirs!.fold('${SUB}dirs: ', (String all,  entity){
+			return '$all\n${entity._toString(indent+2)}';
 		})
 				: '';
 		var _content = [_files, _dirs].fold('${TAB}$label: ', (String all, String content){
@@ -104,7 +109,12 @@ class TEntity extends TFileSystemEntity{
 	static FileSystemEntity Function(FileSystemEntity e) onServerRun = (e) => e;
 	static FileSystemEntity Function(FileSystemEntity e) onUnitTesting = (e) => e;
 	@override FileSystemEntity entity;
-	TEntity({@required FileSystemEntity entity, List<File> files, List<Directory> dirs, int level = 0}){
+	TEntity({
+		required this.entity,
+		List<File>? files,
+		List<Directory>? dirs,
+		int level = 0
+	}){
 		if (unitTesting) {
 			this.entity = onUnitTesting(entity);
 		}else if (serverRun){
@@ -114,10 +124,8 @@ class TEntity extends TFileSystemEntity{
 		}
 		this._level = level;
 		if(isDirectory){
-			this.files  = files?.map((f)=> TFile(entity: f, level: level))?.toList();
-			this.dirs   = dirs?.map((d) => TDirectory(entity: d, level: level + 1))?.toList();
-			this.files ??= [];
-			this.dirs  ??= [];
+			this.files  = (files ?? []).map((f)=> TFile(entity: f, level: level)).toList();
+			this.dirs   = (dirs ?? []).map((d) => TDirectory(entity: d, level: level + 1)).toList();
 		}
 	}
 	
@@ -127,7 +135,7 @@ class TEntity extends TFileSystemEntity{
 	
 	@override
 	String get label {
-		if (_label != null) return _label;
+		if (_label != null) return _label!;
 		return isFile
 				? _label = _filelabel
 				: _label = _dirlabel;
@@ -145,11 +153,14 @@ class TEntity extends TFileSystemEntity{
 }
 
 class TFile extends TEntity{
-	FileSystemEntity entity;
-	TFile ({@required File entity, int level}) : super(entity: entity, level: level);
+	final FileSystemEntity entity;
+	TFile ({
+		required this.entity,
+		int level = 0
+	}) : super(entity: entity, level: level);
 	
-	String   get label       {
-		if (_label != null) return _label;
+	String get label {
+		if (_label != null) return _label!;
 		return _label = _filelabel;
 	}
 	@alwaysThrows
@@ -159,20 +170,26 @@ class TFile extends TEntity{
 }
 
 class TDirectory extends TEntity {
-	TDirectory({@required Directory entity, List<File> files, List<Directory> dirs, int level})
-			: super(entity: entity, files: files, dirs: dirs, level: level);
+	TDirectory({
+		required Directory entity,
+		List<File>? files,
+		List<Directory>? dirs,
+		int level = 0
+	}) : super(entity: entity, files: files, dirs: dirs, level: level);
 	
 	String get label{
-		if (_label != null) return _label;
+		if (_label != null) return _label!;
 		return _label = _dirlabel;
 	}
 	
 	@override
 	add(TFileSystemEntity data){
 		if (data.entity is Directory){
-			dirs.add(data );
+			assert(dirs != null);
+			dirs!.add(data );
 		}else if (data.entity is File){
-			files.add(data );
+			assert(files != null);
+			files!.add(data );
 		}
 	}
 }
@@ -185,9 +202,6 @@ class TDirectory extends TEntity {
    String            globptn;
    _DirectoryOpt({this.dir, this.recursive, this.stat, this.globptn});
 }*/
-typedef TWalkContinue   = bool Function({StreamSubscription subscription, Directory dir, File file});
-typedef TWalkCB         = bool Function(Directory root, Directory current, List<FileSystemEntity> filesOrDirs);
-typedef TWatchCB        = bool Function(List<FileSystemEntity> changed_files);
 //@fmt:on
 
 
@@ -213,6 +227,6 @@ typedef TOnFile = bool Function(StreamSubscription subscription, Directory root,
 typedef TOnDir = bool Function(StreamSubscription subscription, Directory root, Directory parent, Directory current);
 
 
-typedef TOnFileChangedWrapper = Function(StreamSubscription stream, File file, [String error_message]);
-typedef TOnFileChanged        = Function(StreamSubscription stream, File file, [bool delay_ignored, String message]);
+typedef TOnFileChangedWrapper = Function(StreamSubscription stream, File file, [String? error_message]);
+typedef TOnFileChanged        = Function(StreamSubscription stream, File file, [bool? delay_ignored, String? message]);
 

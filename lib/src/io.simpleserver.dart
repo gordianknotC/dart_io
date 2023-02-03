@@ -23,15 +23,15 @@ enum IDE {
 class FileEvent{
    File file;
    Events evt;
-   String msg;
+   String? msg;
    FileEvent(this.file, this.evt, this.msg);
 }
 
 class WatchServer extends StaticServer{
-   Shell             shell;
-   YamlMap           parsedYaml;
-   YamlConfig        yconfig;
-   DirectoryWatcher  dwatcher;
+   late Shell             shell;
+   YamlMap?           parsedYaml;
+   YamlConfig?        yconfig;
+   DirectoryWatcher?  dwatcher;
    StreamController<FileEvent>  _stream_ctrl = BehaviorSubject<FileEvent>();
    Stream<FileEvent>   get file_stream => _stream_ctrl.stream;
    Sink<FileEvent>     get file_sink   => _stream_ctrl.sink;
@@ -70,14 +70,15 @@ class WatchServer extends StaticServer{
    
    _init(String YAML_PTH, String ROOT, bool clearOnEvent, IDE ide, bool considerCache) async {
       await _yamlInit(YAML_PTH, ide, considerCache);
-      var dwatcher = DirectoryWatcher( config: yconfig, decay: 1000);
+      assert(yconfig != null);
+      var dwatcher = DirectoryWatcher( config: yconfig!, decay: 1000);
       print('ROOT    : $ROOT');
       print('CURRENT : ${Directory.current.path}');
-      print('PATTERNS: ${dwatcher.file_patterns.toList()}');
+      print('PATTERNS: ${dwatcher.file_patterns?.toList()}');
       print('INCLUDES: ${dwatcher.includes.toList()}');
       print('EXCLUDES: ${dwatcher.excludes.toList()}');
       
-      void task(String name, File file, Events evt, String msg){
+      void task(String name, File file, Events evt, String? msg){
          if (clearOnEvent)
             shell.clearConsole();
          print('\t$name: ${file.path}, error_msg:$msg');
@@ -87,7 +88,7 @@ class WatchServer extends StaticServer{
       }
       
       dwatcher
-         ..onFileModified((stream, file, [msg]){
+         ..onFileModified((stream, file, [ msg]){
             task('modified', file, Events.modified, msg);
          })
          ..onFileCreated((stream, file, [msg]){
@@ -108,7 +109,7 @@ class WatchServer extends StaticServer{
          ..watch();
       
       await start();
-      server.close().then((e){
+      server?.close().then((e){
          _stream_ctrl.close();
          print('close streams');
       });
@@ -117,16 +118,16 @@ class WatchServer extends StaticServer{
 
 
 class FileArchiveStaticServer{
-   String            serverPath;
-   String            rootPath;
-   VirtualDirectory  root;
-   HttpServer server;
-   List<TEntity> currentDirs;
-   List<TEntity> currentFiles;
-   void Function(HttpRequest req) _onRequest;
+   late String           rootPath;
+   late VirtualDirectory root;
+   HttpServer? server;
+   String?     serverPath;
+   List<TFileSystemEntity>? currentDirs;
+   List<TFileSystemEntity>? currentFiles;
+   void Function(HttpRequest req)? _onRequest;
    
-   FileArchiveStaticServer({String pth}){
-      rootPath = Path.dirname(pth) ?? "./" ; //join(dirname(Platform.script.toFilePath()));
+   FileArchiveStaticServer({String? pth}){
+      rootPath = Path.dirname(pth ?? "./")  ; //join(dirname(Platform.script.toFilePath()));
       root     = VirtualDirectory(rootPath);
       root.allowDirectoryListing = true;
       print('rootPath: ${join(dirname(Platform.script.toFilePath()))}');
@@ -134,10 +135,10 @@ class FileArchiveStaticServer{
       print('rootPath: ${root.root}');
    }
    
-   Future<TEntity> walk([String dir]){
+   Future<TEntity> walk([String? dir]){
       return walkDir(Directory(join(rootPath, "." + (dir ?? ""))), recursive: false).then((TEntity data){
-         currentDirs = data.dirs;
-         currentFiles = data.files;
+         currentDirs = data.dirs ?? [];
+         currentFiles = data.files ?? [];
          return data;
       });
    }
@@ -189,8 +190,8 @@ class FileArchiveStaticServer{
       
       var pth = getRequestPath(req);
       FileSystemEntity entity = FileSystemEntity.isDirectorySync(pth)
-                                ? Directory(pth)
-                                : File(pth);
+        ? Directory(pth)
+        : File(pth);
       
       final target = TEntity(entity: entity);
       print('\t'
@@ -206,29 +207,29 @@ class FileArchiveStaticServer{
    }
    
    void stop(){
-      server.close(force: true);
+      server?.close.call(force: true);
    }
    
    Future start({int port = 4048} ) async {
    		serverPath = 'http://127.0.0.1:$port';
       server = await HttpServer.bind('0.0.0.0', port, shared: true);
       print('Listening on http://localhost:$port\npath to build:${rootPath}');
-      await for (var request in server) {
+      await for (var request in server!) {
          _on_request(request);
       }
    }
 }
 
 class StaticServer{
-   String            serverPath;
-   String            rootPath;
-   VirtualDirectory  root;
-   HttpServer server;
-   void Function(HttpRequest req) _onRequest;
+   late String rootPath;
+   late VirtualDirectory root;
+   String? serverPath;
+   HttpServer? server;
+   void Function(HttpRequest req)? _onRequest;
    
-   StaticServer({String rootPath}){
+   StaticServer({String? rootPath}){
       this.rootPath = rootPath ?? join(dirname(Platform.script.toFilePath()));
-      this.root      = VirtualDirectory(rootPath);
+      this.root     = VirtualDirectory(rootPath);
    }
    
    String getRequestPath(HttpRequest req){
@@ -243,7 +244,7 @@ class StaticServer{
    }
    
    void _on_request (HttpRequest req){
-      if (_onRequest != null) return _onRequest(req);
+      if (_onRequest != null) return _onRequest!.call(req);
       //print('request: ${req.uri}');
       var pth = getRequestPath(req);
       print('on request > : $pth');
@@ -261,7 +262,7 @@ class StaticServer{
       
       server = await HttpServer.bind('0.0.0.0', port, shared: true, );
       print('Listening on $serverPath');
-      await for (var request in server) {
+      await for (var request in server!) {
          _on_request(request);
       }
    }

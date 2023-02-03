@@ -57,7 +57,7 @@ settings:
 '''); //@fmt:on
 
 
-void TestCase_fileIoTest([List<String> arguments]) {
+void TestCase_fileIoTest([List<String>? arguments]) {
    print('arguments: $arguments');
    group('Test Platform.script for understanding how script path be resolved', (){
       test('Url what?', (){
@@ -99,7 +99,7 @@ void TestCase_fileIoTest([List<String> arguments]) {
       });
       
       test('Platform.script usage', () {
-         var dir = getScriptPath(Platform.script);
+         final dir = getScriptPath(Platform.script);
          print('CURRENT:$CURRENT');
          print('dir:$dir');
          print('sep: ${path.separator}');
@@ -110,8 +110,8 @@ void TestCase_fileIoTest([List<String> arguments]) {
    
    group('YamlConfig Tests from scratch', () {
       var encode_json, file_pattern, folders;
-      YamlMap parsedYaml;
-      YamlConfig yconfig;
+      late YamlMap parsedYaml;
+      late YamlConfig yconfig;
       setUpAll(() async {
          await dumpMapToJSON(data, File(DUMP_PTH));
          await File(YAML_PTH).readAsString().then((str) {
@@ -167,7 +167,7 @@ void TestCase_fileIoTest([List<String> arguments]) {
             var cfg = YamlConfig(YAML_PTH);
             expect(cfg.name, 'vuedart_transformer_setting');
             expect(
-               cfg.settings.folders['components'][0],
+               cfg.settings.folders!['components']![0],
                equals('$expect_project_root\\lib\\src\\components\\'));
          });
          
@@ -239,7 +239,7 @@ void TestCase_fileIoTest([List<String> arguments]) {
                print('\n\n');
             });
             ;
-            var sourceExists = Directory(yconfig.settings.folders['source'][0]).existsSync();
+            var sourceExists = Directory(yconfig.settings.folders!['source']![0]).existsSync();
             expect(sourceExists, equals(true));
          });
          
@@ -387,13 +387,13 @@ void TestCase_fileIoTest([List<String> arguments]) {
    
    group('Test General Functionig for DirectoryWalker and DirectoryWatcher', (){
       const COMP_PATH   = "$expect_project_root\\test\\components";
-      YamlMap           parsedYaml;
-      YamlConfig        yconfig;
-      DirectoryWalker   dwalker;
-      List<Directory>   dirs;
-      List asset_files;
-      List comp_files;
-      List lib_files;
+      late YamlMap           parsedYaml;
+      late YamlConfig        yconfig;
+      late DirectoryWalker   dwalker;
+      late List<Directory>   dirs;
+      late List asset_files;
+      late List comp_files;
+      late List lib_files;
       List src_files;
       File appended_txt = File(path.join(WATCH_PTH, "added_for_tests.txt"));
       File appended_vue = File(path.join(COMP_PATH, "added_for_tests.vue"));
@@ -447,8 +447,8 @@ void TestCase_fileIoTest([List<String> arguments]) {
          test('Test _inferRootDir by clear out _root_dir and _configs', (){
             var configs = dwalker.configs;
             var root_dir = dwalker.root_dir;
-            dwalker.configs = null;
-            dwalker.root_dir = null;
+            // dwalker.configs = null;
+            // dwalker.root_dir = null;
             expect(dwalker.root_dir.path, equals("$expect_project_root\\lib"));
             dwalker.configs = configs;
             dwalker.root_dir = root_dir;
@@ -555,8 +555,8 @@ void TestCase_fileIoTest([List<String> arguments]) {
       
       group("Test Directory Watcher", () {
          YamlMap           parsedYaml;
-         YamlConfig        yconfig;
-         DirectoryWatcher  dwatcher;
+         late YamlConfig        yconfig;
+         late DirectoryWatcher  dwatcher;
          List<Directory>   dirs;
          
          setUp(() async {
@@ -582,6 +582,7 @@ void TestCase_fileIoTest([List<String> arguments]) {
                parsedYaml  = loadYaml(str);
                yconfig     = YamlConfig(parsedYaml, YAML_PTH);
             });
+
             dwatcher = DirectoryWatcher(dirs: dirs, config: yconfig);
          });
          

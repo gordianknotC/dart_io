@@ -1,8 +1,8 @@
 import 'package:path/path.dart' as Path;
+import 'package:quiver/pattern.dart' as Q;
 import 'package:IO/src/io.path.dart' as io;
 import 'package:common/src/common.log.dart';
 import 'dart:io' show Directory;
-import 'package:quiver/pattern.dart' as Q;
 import 'package:common/src/common.dart';
 
 final _log = Logger(name: "io.glob", levels: [ELevel.critical, ELevel.error, ELevel.warning, ELevel.debug]);
@@ -38,7 +38,7 @@ String convertIntoGlobPath(String pth) {
 }
 
 /// turning path into system recognizable path, which is "absolute path"
-String absolute(String pth, [String basepath, bool hasVariable]) {
+String absolute(String pth, [String? basepath, bool? hasVariable]) {
    pth = convertIntoSystempath(pth);
    if (hasVariable == true) return pth;
    return Path.isAbsolute(pth)
@@ -57,21 +57,23 @@ String absolute(String pth, [String basepath, bool hasVariable]) {
 const PTN = ['*', '?', '[', ']'];
 class GlobPtnRectifier {
    static Map<String, GlobPtnRectifier> cache = {};
-   String         _sep = globsep;
-   String         _parent_segment;
-   String         path;
-   List<String>   _segments;
+   late String _parent_segment;
+   String      _sep = globsep;
+   String      path;
+   List<String> _segments;
    
    factory GlobPtnRectifier(String path){
-      if (GlobPtnRectifier.cache.containsKey(path))
-         return GlobPtnRectifier.cache[path];
-      GlobPtnRectifier.cache[path] = GlobPtnRectifier.init(path);
-      return GlobPtnRectifier.cache[path];
+      if (GlobPtnRectifier.cache.containsKey(path)){
+         final data = GlobPtnRectifier.cache[path];
+         assert(data != null);
+         return data!;
+      }
+      return GlobPtnRectifier.cache[path] = GlobPtnRectifier.init(path);
    }
    
-   GlobPtnRectifier.init(String pth){
-      _segments = [];
-      path = pth;
+   GlobPtnRectifier.init(String pth)
+       :_segments = [], path = pth
+   {
       rectify();
       GlobPtnRectifier.cache[pth] = this;
    }
@@ -92,7 +94,7 @@ class GlobPtnRectifier {
       return ret;
    }
    
-   String get parent_segment{
+   String? get parent_segment{
       if (_parent_segment != null) return _parent_segment;
       if (_segments.length >= 2){
          _parent_segment =  _segments[_segments.length - 2];
@@ -140,7 +142,7 @@ class GlobPtnRectifier {
       return pth;
    }
 
-   String absolute(String pth, [String basepath, bool hasVariable]) {
+   String absolute(String pth, [String? basepath, bool? hasVariable]) {
       pth = convertIntoSystempath(pth);
       if (hasVariable == true) return pth;
       return convertIntoGlobPath(Path.isAbsolute(pth)
@@ -174,7 +176,10 @@ class GlobPtnRectifier {
 
 //@fmt:off
 class GlobMatcher extends MGlobMatcher{
-   GlobMatcher({List<String> includes_pattern, List<String> excludes_pattern}){
+   GlobMatcher({
+      required List<String> includes_pattern,
+      required List<String> excludes_pattern
+   }){
       Init_GlobMatcher(includes_pattern: includes_pattern, excludes_pattern:  excludes_pattern);
    }
 }
@@ -187,12 +192,15 @@ class GlobMatcher extends MGlobMatcher{
 ///       Prefixed with M denotes for Mixin.
 ///
 class MGlobMatcher  {
-   Iterable<Q.Glob> includes;
-   Iterable<Q.Glob> excludes;
+   late Iterable<Q.Glob> includes;
+   late Iterable<Q.Glob> excludes;
    
-   Init_GlobMatcher({List<String> includes_pattern, List<String> excludes_pattern}){
-      includes = includes_pattern?.map((ptn) => Q.Glob(GlobPtnRectifier(ptn).path));
-      excludes = excludes_pattern?.map((ptn) => Q.Glob(GlobPtnRectifier(ptn).path));
+   Init_GlobMatcher({
+      required List<String> includes_pattern,
+      required List<String> excludes_pattern
+   }){
+      includes = includes_pattern.map((ptn) => Q.Glob(GlobPtnRectifier(ptn).path));
+      excludes = excludes_pattern.map((ptn) => Q.Glob(GlobPtnRectifier(ptn).path));
       _log('initialize Glob... \nincludes $includes', ELevel.debug);
    }
    

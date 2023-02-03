@@ -14,13 +14,22 @@ class CommonEnv {
    Map<String, String> env = {};
    
    String get node_path {
-      var nodepath = parsePath(env[_ENV_NODE]).first;
+      final path = env[_ENV_NODE];
+      assert(path != null);
+      var nodepath = parsePath(path!).first;
       if (Platform.isWindows) return parentPath(nodepath);
       return nodepath;
    }
-   String get dart_sdk  => parsePath(env[_ENV_DART]).first;
-   String get path      => env[_ENV_PATH];
-   
+   String get dart_sdk{
+      final path = env[_ENV_DART];
+      assert(path != null);
+      return parsePath(path!).first;
+   }
+   String get path {
+      final path = env[_ENV_PATH];
+      assert(path != null);
+      return path!;
+   }
    void set node_path(String v) => env[_ENV_NODE] = v;
    void set path     (String v) => env[_ENV_PATH] = v;
    void set dart_sdk (String v) => env[_ENV_DART] = v;
@@ -35,40 +44,52 @@ class CommonEnv {
    }
    
    String operator [](Object key) {
-      return env[key];
+      final path = env[key];
+      assert(path != null);
+      return path!;
    }
   
   operator []=(String left, String right){
       env[left] = right;
   }
 
-   CommonEnv({String node_path, String path, String dart_sdk}){
+   CommonEnv({
+      String? node_path,
+      String? path,
+      String? dart_sdk
+   }){
       var e = Platform.environment;
       env = {
-         _ENV_NODE: node_path ?? e[_ENV_NODE],
-         _ENV_DART: dart_sdk  ?? e[_ENV_DART],
-         _ENV_PATH: path      ?? e[_ENV_PATH],
+         _ENV_NODE: node_path ?? e[_ENV_NODE]!,
+         _ENV_DART: dart_sdk  ?? e[_ENV_DART]!,
+         _ENV_PATH: path      ?? e[_ENV_PATH]!,
       };
    }
 }
 
 class CmdEvent{
    String   name;
-   String   data;
-   bool     is_stdin = false;
-   int      ext_code;
-   String   error;
+   String?   data;
+   bool     is_stdin;
+   int?      ext_code;
+   String?   error;
    bool get isOK     => error == null && ext_code == 0;
    bool get isFailed => !isOK;
    
-   CmdEvent({@required this.name, this.data, this.is_stdin, this.ext_code, this.error});
+   CmdEvent({
+      required this.name,
+      this.data,
+      this.is_stdin = false,
+      this.ext_code,
+      this.error
+   });
 }
 
 class Shell{
    CommonEnv env;
-   StreamController<CmdEvent> _controller = BehaviorSubject<CmdEvent>();
-   Stream<CmdEvent> get std_stream => _controller.stream;
-   Sink<CmdEvent>   get std_sink   => _controller.sink;
+   StreamController<CmdEvent>? _controller = BehaviorSubject<CmdEvent>();
+   Stream<CmdEvent> get std_stream => _controller!.stream;
+   Sink<CmdEvent>   get std_sink   => _controller!.sink;
    
    clearConsole() async {
       //await input('cls', [], null, true);
@@ -83,7 +104,7 @@ class Shell{
       }
    }
    
-   input(String exe, [List<String> arguments, String _stdin, bool streaming = true]) async {
+   input(String exe, [List<String>? arguments, String? _stdin, bool streaming = true]) async {
       arguments ??= [];
       await Process.start(
          exe,
@@ -92,7 +113,8 @@ class Shell{
          environment: env.env
       ).then((process) async {
          if (_stdin != null){
-            await process.stdin.add(AsciiCodec().encode(_stdin));
+            process.stdin.add(AsciiCodec().encode(_stdin));
+            // await process.stdin.add(AsciiCodec().encode(_stdin));
             print('before close');
             await process.stdin.close();
             print('closed');
@@ -105,7 +127,7 @@ class Shell{
             );
          }).onError((e){
             if (!streaming) return;
-            _controller.addError(e, StackTrace.fromString(e));
+            _controller!.addError(e, StackTrace.fromString(e));
          });
          process.exitCode.then((code){
             if (!streaming) return;
@@ -116,18 +138,17 @@ class Shell{
          process.stderr.listen((data){
             if (!streaming) return;
             var output = AsciiCodec().decode(data);
-            _controller.addError(output, StackTrace.fromString(output));
+            _controller!.addError(output, StackTrace.fromString(output));
          });
          return process;
       });
    }
    
    close(){
-      _controller.close();
+      _controller!.close();
       _controller = null;
    }
-   Shell(){
-      env = CommonEnv();
-   }
+
+   Shell(): env = CommonEnv();
 }
 

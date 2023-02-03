@@ -2,7 +2,6 @@ import 'dart:io' show Directory, File, FileSystemEntity, FileSystemEvent, Platfo
 import 'dart:async' show Stream, StreamController;
 import 'dart:async' show Completer, StreamTransformer, EventSink, StreamSubscription;
 
-
 import 'package:IO/src/typedefs.dart';
 import 'package:quiver/pattern.dart';
 import 'package:path/path.dart' as Path;
@@ -16,7 +15,7 @@ import 'package:IO/src/io.path.dart';
 final _log = Logger(name: "io.walk", levels: [ELevel.critical, ELevel.error, ELevel.warning, ELevel.debug]);
 
 class FileNotExistsError extends Error {
-	final Object message;
+	Object? message;
 	FileNotExistsError([this.message]);
 	
 	String toString() => "[FileNotExistsError] \n$message";
@@ -40,7 +39,7 @@ class FileNotExistsError extends Error {
 */
 class BaseStreamPublisher {
 	StreamController<String> _publishCtrl = new StreamController<String>();
-	Stream<String> onPublish;
+	late Stream<String> onPublish;
 	
 	BaseStreamPublisher() {
 		onPublish = _publishCtrl.stream;
@@ -103,7 +102,10 @@ class BaseStreamReader {
 */
 
 Future<TEntity> walkDir(Directory dir,
-		{bool symlink = false, TEntity recorder, bool recursive = false, TWalkContinue continuum, bool cancelOnError = false}) async {
+		{bool symlink = false, TEntity? recorder,
+			bool recursive = false, TWalkContinue? continuum,
+			bool cancelOnError = false
+}) async {
 	//--------------------------------------------
 	List<FileSystemEntity> folders = [];
 	Completer<TEntity> completer = Completer<TEntity>();
@@ -123,15 +125,15 @@ Future<TEntity> walkDir(Directory dir,
 	
 	Stream<FileSystemEntity>receiver = dir.list(recursive: recursive, followLinks: symlink);
 	
-	StreamSubscription<FileSystemEntity> subscription;
+	late StreamSubscription<FileSystemEntity> subscription;
 	subscription = receiver.listen((FileSystemEntity entity) {
 		if (entity is Directory) {
-			recorder.dirs.add(TDirectory(entity: entity));
+			recorder!.dirs?.add(TDirectory(entity: entity));
 			folders.add(entity);
 		} else {
 			//determines weather to record file or not
-			if (continuum == null || continuum(dir: dir, file: entity, subscription: subscription))
-				recorder.files.add(TFile(entity: entity));
+			if (continuum == null || continuum(dir: dir, file: entity as File, subscription: subscription))
+				recorder!.files?.add(TFile(entity: entity));
 		}
 		_log('walkDir, onProgress ${entity.path}', ELevel.debug);
 	}, onDone: () {
@@ -153,12 +155,12 @@ Future<TEntity> walkDir(Directory dir,
 		
 		for (var i = 0; i < l; ++i) {
 			var _folder = folders[i];
-			var _recorder = recorder[_folder] as TEntity;
+			var _recorder = recorder![_folder] as TEntity;
 			// determines weather to walk into directory or not
 			_log('prepare to walk on directory');
-			if (continuum == null || continuum(dir: _folder, subscription: subscription) == true) {
+			if (continuum == null || continuum(dir: _folder as Directory, subscription: subscription) == true) {
 				_log('\twalk on Directory: ${_folder.path}', ELevel.debug);
-				walkDir(_folder, recorder: _recorder,
+				walkDir(_folder as Directory, recorder: _recorder,
 						symlink: symlink,
 						recursive: recursive,
 						continuum: continuum,
@@ -171,31 +173,31 @@ Future<TEntity> walkDir(Directory dir,
 		}
 	}, onError: (e) {
 		throw new Exception('[walkDir]\nSome error occured while walking directory: $dir, \nerrorCode:$e');
-	}, cancelOnError: cancelOnError,);
+	}, cancelOnError: cancelOnError);
 	return completer.future;
 } //@fmt:on
 
 
 class DirectoryWalker<T_config extends YamlConfig> {
 	//@fmt:off
-	Set <FileSystemEntity> _files;
-	List<Directory> _dirs_to_walk;
-	Directory _root_dir;
-	T_config _configs;
-	Iterable<Glob> _file_patterns;
+	Set <FileSystemEntity>? _files;
+	late List<Directory> _dirs_to_walk;
+	Directory? _root_dir;
+	T_config? _configs;
+	Iterable<Glob>? _file_patterns;
 	Map cache = {};
 	
-	bool Function(StreamSubscription subscription, Directory root, Directory parent, File file) _onFileWalk;
-	bool Function(StreamSubscription subscription, Directory root, Directory parent, Directory current) _onDirectoryWalk;
+	bool Function(StreamSubscription subscription, Directory root, Directory parent, File file)? _onFileWalk;
+	bool Function(StreamSubscription subscription, Directory root, Directory parent, Directory current)? _onDirectoryWalk;
 	
 	//bool Function()                                                      ;
 	
 	//region: cached properties
 	Directory get root_dir {
-		if (_root_dir != null) return _root_dir;
+		if (_root_dir != null) return _root_dir!;
 		if (_configs == null) return _root_dir = _inferRootDir();
-		_root_dir = Directory(_configs?.root_path);
-		return _root_dir;
+		_root_dir = Directory(_configs!.root_path);
+		return _root_dir!;
 	}
 	
 	void set root_dir(Directory v) {
@@ -203,7 +205,8 @@ class DirectoryWalker<T_config extends YamlConfig> {
 	}
 	
 	List<Directory> get dirs_to_walk {
-		if (_dirs_to_walk != null) return _dirs_to_walk;
+		if (_dirs_to_walk != null)
+			return _dirs_to_walk;
 		throw new Exception('DirectoryWatcher.dirs_to_walk not initialized yet!');
 	}
 	
@@ -212,7 +215,7 @@ class DirectoryWalker<T_config extends YamlConfig> {
 	}
 	
 	T_config get configs {
-		if (_configs != null) return _configs;
+		if (_configs != null) return _configs!;
 		throw new Exception('DirectoryWatcher.configs not initialized yet!');
 	}
 	
@@ -220,9 +223,10 @@ class DirectoryWalker<T_config extends YamlConfig> {
 		_configs = v;
 	}
 	
-	Iterable<Glob> get file_patterns {
-		if (_file_patterns != null) return _file_patterns;
-		var ptn = configs.settings.file_pattern;
+	Iterable<Glob>? get file_patterns {
+		if (_file_patterns != null)
+			return _file_patterns!;
+		final ptn = configs.settings.file_pattern;
 		return _file_patterns = ptn == null ? null : ptn.map((_ptn) => Glob(_ptn));
 	}
 	
@@ -235,7 +239,7 @@ class DirectoryWalker<T_config extends YamlConfig> {
 	}
 	
 	Set<FileSystemEntity> get files {
-		if (_files != null) return _files;
+		if (_files != null) return _files!;
 		throw new Exception('DirectoryWatcher._files not initialized yet!');
 	}
 	
@@ -306,11 +310,13 @@ class DirectoryWalker<T_config extends YamlConfig> {
       [Description]
          feed DirectoryWatcher with [List<Directory>] or [T_config]
    */
-	DirectoryWalker({List<Directory>dirs, T_config config}) {
-		if (config == null && dirs == null) throw Exception("Either dirs or config can be optional, not both.");
-		configs = config;
-		
-		_dirs_to_walk = dirs ?? config.folders.map((x) {
+	DirectoryWalker({List<Directory>? dirs, T_config? config}) {
+		if (config == null && dirs == null)
+			throw Exception("Either dirs or config can be optional, not both.");
+		if (config != null)
+			configs = config;
+
+		_dirs_to_walk = dirs ?? (config?.folders.map((x) {
 			var d = Directory(x);
 			d.exists().then((is_exists) {
 				if (!is_exists);
@@ -318,9 +324,9 @@ class DirectoryWalker<T_config extends YamlConfig> {
 					raise('$e\n'
 							'directory: $d setup in yaml config not exists!'
 							'config folders: ${config.folders}'));
-			
+
 			return d;
-		}).toList();
+		}).toList() ?? []);
 	}
 	
 	//endregion: constructor
@@ -372,9 +378,9 @@ class DirectoryWalker<T_config extends YamlConfig> {
 	
 	bool isFileMatched(String file_path) {
 		var filename = GlobPtnRectifier(file_path).last;
-		var ret = file_patterns.any((Glob glob) {
+		var ret = (file_patterns?.any((Glob glob) {
 			return glob.hasMatch(filename);
-		});
+		}) ?? false);
 		//_log.debug('path:$file_path, matched: $ret');
 		return ret;
 	}
@@ -409,19 +415,22 @@ class DirectoryWalker<T_config extends YamlConfig> {
          about return type::
             type TRet = Map<String, FileSystemEntity | TRet>
    */
-	Future<TEntity> walk({Directory dir}) async {
-		Completer completer = Completer<TEntity>();
-		YamlConfig cfg = _configs;
-		Directory root = _configs != null ? Directory(_configs.root_path) : dir;
-		bool continuum({StreamSubscription subscription, Directory dir, File file}) {
+	Future<TEntity> walk({required Directory dir}) async {
+		Completer<TEntity> completer = Completer<TEntity>();
+		YamlConfig? cfg = _configs;
+		Directory root = _configs != null ? Directory(_configs!.root_path) : dir;
+
+		final TWalkContinue continuum = ({required subscription, required dir, File? file}){
 			if (file != null) { // to collect specific file types or not
-				if (file_patterns == null) return true;
+				if (file_patterns == null)
+					return true;
 				
 				var is_walkOnFile_passed = _onFileWalk?.call(subscription, root, dir, file);
 				if (is_walkOnFile_passed == false) return false;
 				return isFileMatched(file.path);
 			} else if (dir != null) { //to walk into further
-				if (cfg == null) return true;
+				if (cfg == null)
+					return true;
 				var parent = _get<Directory>(dir, () => dir.parent);
 				var is_walkOnDir_passed = _onDirectoryWalk?.call(subscription, root, parent, dir);
 				var dir_name = GlobPtnRectifier(dir.path).path;
@@ -430,12 +439,13 @@ class DirectoryWalker<T_config extends YamlConfig> {
 			} else {
 				throw Exception('Invalid Usge, parameters of either Directory or File should be provided');
 			}
-		}
+		};
 		if (dir.existsSync()) {
 			walkDir(dir, recursive: false, continuum: continuum).then((TEntity data) {
-				Iterable<File> temp = data.files.map((f) => f.entity);
+				data.files?.map((f) => f.entity);
+				Iterable<File> temp = data.files?.map((f) => f.entity as File) ?? [];
 				_files ??= Set<FileSystemEntity>();
-				_files.addAll(temp);
+				_files!.addAll(temp);
 				completer.complete(data);
 			});
 		} else {
@@ -449,15 +459,19 @@ class DirectoryWalker<T_config extends YamlConfig> {
 	//region: private methods:: _inferRootDir
 	Directory _inferRootDir() {
 		List<Tuple<Directory, int>> paths_to_walk, sorted, shortest_list;
-		if (dirs_to_walk != null && dirs_to_walk.isEmpty) throw Exception('Uncaught exceptions, directories not initialized yet');
+		if (dirs_to_walk != null && dirs_to_walk.isEmpty)
+			throw Exception('Uncaught exceptions, directories not initialized yet');
+
 		paths_to_walk = dirs_to_walk.map((d) => Tuple(d, GlobPtnRectifier(d.path).segment_length)).toList();
 		sorted = FN.sorted(paths_to_walk, (a, b) => a.value - b.value);
 		shortest_list = sorted.where((data) => data.value == sorted[0].value).toList();
 		if (shortest_list.length > 1) {
-			var parent = GlobPtnRectifier(shortest_list[0].key.path).parent_segment;
-			return shortest_list.every((data) => GlobPtnRectifier(data.key.path).parent_segment == parent) ? shortest_list[0].key : () {
-				return Exception("Cannot infer root path by resolving following paths: ${shortest_list}");
-			}();
+			final parent = GlobPtnRectifier(shortest_list[0].key.path).parent_segment;
+			return shortest_list.every((data) => GlobPtnRectifier(data.key.path).parent_segment == parent)
+				? shortest_list[0].key
+				: () {
+						throw Exception("Cannot infer root path by resolving following paths: ${shortest_list}");
+					}();
 		} else if (shortest_list.length == 1) {
 			return sorted[0].key;
 		} else {
@@ -485,12 +499,12 @@ class DirectoryWalker<T_config extends YamlConfig> {
 
 
 class DirectoryWatcher extends DirectoryWalker<YamlConfig> {
-	TOnFileChanged _onFileCreated;
-	TOnFileChanged _onFileModified;
-	TOnFileChanged _onFileDeleted;
-	TOnFileChanged _onFileMoved;
-	TOnFileChanged _onDone;
-	TOnFileChanged _onError;
+	TOnFileChanged? _onFileCreated;
+	TOnFileChanged? _onFileModified;
+	TOnFileChanged? _onFileDeleted;
+	TOnFileChanged? _onFileMoved;
+	TOnFileChanged? _onDone;
+	TOnFileChanged? _onError;
 	Map<String, int> _file_info = {};
 	bool _cancel = false;
 	int decay;
@@ -503,7 +517,7 @@ class DirectoryWatcher extends DirectoryWalker<YamlConfig> {
 		_cancel = v;
 	}
 	
-	DirectoryWatcher({List<Directory>dirs, YamlConfig config, this.decay = 400}) : super(dirs: dirs, config: config);
+	DirectoryWatcher({List<Directory>? dirs, YamlConfig? config, this.decay = 400}) : super(dirs: dirs, config: config);
 	
 	
 	onFileCreated(TOnFileChangedWrapper cb) {
@@ -545,7 +559,7 @@ class DirectoryWatcher extends DirectoryWalker<YamlConfig> {
 	}
 	
 	void _processFetchedValue(TEntity entity) {
-		StreamSubscription subscription;
+		late StreamSubscription subscription;
 		if (entity.isDirectory) {
 			_log.debug('\twatch on path:${entity.entity.path}');
 			subscription = entity.entity.watch().listen((FileSystemEvent event) {
@@ -573,9 +587,9 @@ class DirectoryWatcher extends DirectoryWalker<YamlConfig> {
 					}
 				}
 			}, onDone: () {
-				_onDone?.call(subscription, entity.entity, true);
+				_onDone?.call(subscription, entity.entity as File, true);
 			}, onError: (e) {
-				_onError?.call(subscription, entity.entity, true, e);
+				_onError?.call(subscription, entity.entity as File, true, e);
 				raise('error on file stream:\n$e');
 			});
 			subscription.onError((e) {
@@ -591,14 +605,14 @@ class DirectoryWatcher extends DirectoryWalker<YamlConfig> {
 					.millisecondsSinceEpoch;
 	
 	TOnFileChanged _getWrappedOnFileCB(TOnFileChangedWrapper cb) {
-		return (StreamSubscription stream, File file, [bool delay_ignored = false, String message]) {
+		return (StreamSubscription stream, File file, [bool? delay_ignored, String? message]) {
 			return guard(() {
 				if (cancel) {
 					stream.cancel();
 					return;
 				}
 				if (_file_info.containsKey(file.path) && delay_ignored == false) {
-					var div = _now() - _file_info[file.path];
+					var div = _now() - (_file_info[file.path] ?? 0);
 					if (div < decay) {
 						return;
 					}
@@ -620,7 +634,7 @@ void main(arguments) {
 //      );
 		walkDir(Directory(dir), recursive: false).then((TEntity data) {
 			var total = 0;
-			data.files.forEach((TEntity e) {
+			data.files?.forEach((e) {
 				var lines = (e.entity as File)
 						.readAsStringSync()
 						.split('\n')

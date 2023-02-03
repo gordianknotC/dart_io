@@ -19,7 +19,7 @@ for converting yaml type into dart type
 ---------------------------------------
 */
 
-List<T> yamlListToList<T>(YamlList list) {
+List<T>? yamlListToList<T>(YamlList? list) {
    //@fmt:off
    if (list == null) return null;
    try {
@@ -34,7 +34,7 @@ List<T> yamlListToList<T>(YamlList list) {
    }
 }     //@fmt:on
 
-Map<String, List<T>> yamlMapToMap<T>(YamlMap map) {
+Map<String, List<T>>? yamlMapToMap<T>(YamlMap? map) {
    if (map == null) return null;
    return Map<String, dynamic>.from(map).map((k, v) =>
       MapEntry<String, List<T>>(k, List<T>.from(v))
@@ -147,7 +147,7 @@ String rectifyPathSeparator(String path) {
    EX:
       getScriptPath(Platform.script)
 */
-String getScriptPath(Uri uri, [String script_name]) {
+String getScriptPath(Uri uri, [String? script_name]) {
    if (script_name == null)
       return rectifyPathSeparator(
          NPath.dirname(uri.toString()).split('file:///')[1]
@@ -164,14 +164,14 @@ Uri getScriptUri(Uri uri, String script_name){
 
 
 class Path {
-   static String rectifyPath(String a){
+   static String? rectifyPath(String? a){
       if (a == null) return a;
       if (a.startsWith('file:'))
          a = a.split('file:///')[1];
       return rectifyPathSeparator(a);
    }
    
-   static String join(String a, String b, [String c]){
+   static String join(String a, String b, [String? c]){
       //print('join a: $a, b:$b');
       return combinePath(NPath.join(
          rectifyPath(a),
@@ -180,14 +180,14 @@ class Path {
       ), sep);
    }
    
-   static String dirname(String a, {bool absolute = false, String ext}){
+   static String dirname(String a, {bool absolute = false, String? ext}){
       if (absolute)
          a = Path.absolute(a);
       // specify file extension, to determine whether it's a file or directory
       // if it's a directory then to find it's dirname is unexpected.
       if (ext != null){
          if (!a.endsWith(ext))
-            return rectifyPath(a);
+            return rectifyPath(a)!;
       }
       return NPath.dirname(rectifyPath(a));
    }
@@ -199,14 +199,14 @@ class Path {
    }
    
    static String fromUri(Uri uri){
-      return rectifyPath(NPath.fromUri(uri));
+      return rectifyPath(NPath.fromUri(uri))!;
    }
    
    static absolute(String path){
       return combinePath(
          rectifyPath(
             Glob.absolute(path)
-         ), sep);
+         )!, sep);
    }
    
    static String basename(String path){

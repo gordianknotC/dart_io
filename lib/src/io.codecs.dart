@@ -29,40 +29,37 @@ const DATA_URI_PREFIX = "data:image/png;base64,";
 class Img {
    String path;
    Uri uri;
-   
+   Img(this.path, this.uri);
     static String getPath(String pth) {
       return Path.join(getScriptPath(Platform.script), pth);
    }
    
    static Future<Img> loadAsync(String pth) {
-      Img ret = Img();
-      ret.path = Img.getPath(pth);
-      return File(ret.path).readAsBytes().then((data) {
-         ret.uri = Uri.dataFromBytes(data);
-         return ret;
+      final path = Img.getPath(pth);;
+      return File(path).readAsBytes().then((data) {
+         final uri = Uri.dataFromBytes(data);
+         return Img(path, uri);
       });
    }
    
    static Img loadSync(String pth) {
-      Img ret = Img();
-      pth = Img.getPath(pth);
-      return ret
-         ..path = pth
-         ..uri = Uri.dataFromBytes(File(ret.path).readAsBytesSync());
+      final path = pth = Img.getPath(pth);
+      final uri = Uri.dataFromBytes(File(path).readAsBytesSync());
+      return Img(path, uri);
    }
 
    String get datauri {
-      return DATA_URI_PREFIX + uri.data.contentText;
+      return DATA_URI_PREFIX + (uri.data?.contentText ?? "");
    }
    
    Uint8List get bytes {
-      return uri.data.contentAsBytes();
+      return uri.data?.contentAsBytes.call() ?? Uint8List(0);
    }
    
    void dumpAsText() {
       var base = Path.basename(path + '.txt');
       var dir = Path.dirname(path);
-      File(Path.join(base, dir)).writeAsStringSync(uri.data.contentText);
+      File(Path.join(base, dir)).writeAsStringSync((uri.data?.contentText ?? ""));
    }
 }
 
@@ -77,7 +74,7 @@ class Crypto {
    }
    
    static XtoY(Encoding x, Codec y, String source){
-      return x.fuse(y).encode(source);
+      return x.fuse(y as dynamic).encode(source);
    }
    static String
    utf8ToBase64(String source) {
