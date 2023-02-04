@@ -1,5 +1,4 @@
-撰寫 IO 相關工具，之前想要寫 dart-vue transpiler builder 時準備的，後來沒時間發展.
-以下作為封存，只有部份單元測試，不建議使用，版本目前過舊待更新，細部使用見 test。
+撰寫 IO 相關工具，久沒使用， 以下作為封存，只有部份單元測試，不建議使用，版本目前過舊待更新，細部使用見 test。
 
 ## 內容
 - io.cmd
@@ -20,7 +19,14 @@
   - DirectoryWalker
 - io.yamlconfig
   - YamlConfig
-  
+- io.platform
+
+
+## Todo
+- [V] 更新 dart sdk
+- [ ] 重新 確認/補足 unittest
+
+
 ### io.cmd | [cmd-test]
 
 #### CommonEnv
@@ -304,9 +310,6 @@ abstract class PlatformSketch{
 ### io.yamlconfig.dart [yaml-test]
 
 #### YamlConfig
-
-
-
 
 
 
