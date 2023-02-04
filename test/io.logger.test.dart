@@ -55,7 +55,7 @@ void main() {
       });
 
       test('', (){
-         logger.file_sink.close();
+         logger.file_sink!.close();
          final s = File(logger.logPath).readAsStringSync();
          print(s);
       });

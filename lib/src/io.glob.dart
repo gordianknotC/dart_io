@@ -55,6 +55,8 @@ String absolute(String pth, [String? basepath, bool? hasVariable]) {
 
 
 const PTN = ['*', '?', '[', ']'];
+
+
 class GlobPtnRectifier {
    static Map<String, GlobPtnRectifier> cache = {};
    late String _parent_segment;
@@ -194,7 +196,7 @@ class GlobMatcher extends MGlobMatcher{
 class MGlobMatcher  {
    late Iterable<Q.Glob> includes;
    late Iterable<Q.Glob> excludes;
-   
+
    Init_GlobMatcher({
       required List<String> includes_pattern,
       required List<String> excludes_pattern

@@ -1,0 +1,11 @@
+
+input:
+ docs/readme.md:  {noYAML: true, doctoc: true, replace: {<!--#-->: "# 前端常用HttpRequestClient:"}}
+ docs/client.md:  {noYAML: true, doctoc: true, replace: {<!--#-->: "## FontEnd Client:"}} 
+ docs/chains.md:  {noYAML: true, doctoc: true, replace: {<!--#-->: "## Request/Response Chain:"}} 
+ docs/mocking.md:  {noYAML: true, doctoc: true, replace: {<!--#-->: "## Mocking Axios:"}} 
+output: 
+  name: README.md
+  doctoc:
+    title: "table of content"
+    all: true

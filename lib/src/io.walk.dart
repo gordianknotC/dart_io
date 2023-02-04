@@ -463,7 +463,7 @@ class DirectoryWalker<T_config extends YamlConfig> {
 			throw Exception('Uncaught exceptions, directories not initialized yet');
 
 		paths_to_walk = dirs_to_walk.map((d) => Tuple(d, GlobPtnRectifier(d.path).segment_length)).toList();
-		sorted = FN.sorted(paths_to_walk, (a, b) => a.value - b.value);
+		sorted = FN.sorted(paths_to_walk, (a, b) => (a.value ?? 0) - (b.value ?? 0));
 		shortest_list = sorted.where((data) => data.value == sorted[0].value).toList();
 		if (shortest_list.length > 1) {
 			final parent = GlobPtnRectifier(shortest_list[0].key.path).parent_segment;

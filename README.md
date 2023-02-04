@@ -279,9 +279,34 @@ test('Test stream eventA - walking through directories by feeding stream event;'
   } );
 ```
 
+### io.platform [platform-test]
+支援 web/mobile
+```dart
+export 'sketch/io.platform.loader.dart'
+if (dart.library.io) 'mobile/io.platform.mobile.dart'
+if (dart.library.html) 'web/io.platform.web.dart';
+```
+
+介面
+```dart
+abstract class PlatformSketch{
+  Map<String, String> get environment;
+  bool get isMacOS;
+  Uri get script;
+  bool get isWeb;
+  bool get isWindows ;
+  bool get isLinux;
+  bool get isAndroid ;
+}
+```
+
+
 ### io.yamlconfig.dart [yaml-test]
 
 #### YamlConfig
+
+
+
 
 
 
