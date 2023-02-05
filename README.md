@@ -27,14 +27,14 @@
 - [ ] 重新 確認/補足 unittest
 
 
-### io.cmd | [cmd-test]
+## io.cmd | [cmd-test]
 
-#### CommonEnv
+### CommonEnv
   > 讀取常用 env, 如 DART_SDK | NODE_PATH | PATH
-####  Shell 
+###  Shell 
   > 可執行 shell 並將 shell stdin | stdout 轉接至 StreamController 以利外部偵聽, StreamController 會以 CmdEvent 收發事件.
 
-  ##### CmdEvent
+  #### CmdEvent
   ```dart
   class CmdEvent{
    String   name;
@@ -46,7 +46,7 @@
    bool get isFailed => !isOK;
   }
   ```
-  ##### Example
+  #### Example
   ```dart
   shell.input('dir');
   shell.std_stream.listen((cmd){
@@ -57,12 +57,12 @@
   });
   ```
 
-### io.codecs | [codec-test]
+## io.codecs | [codec-test]
 
-####  Img
+###  Img
   > 載入 image 並可轉換為 datauri | bytes
 
-##### Example
+#### Example
   ```dart
   Img.loadAsync('./assets/newsicon.png').then((image) {
       print('image.path: ${image.path}');
@@ -71,7 +71,7 @@
   });;
   ```
 
-####  Crypto
+###  Crypto
   > 1) 以 [BlockCipher] 加密解密
   > 2) 加密後壓縮 | 解壓縮後解密
   ##### Example:
@@ -82,8 +82,8 @@
   final decrypt     = Crypto.decrypt(encrypt, key);
   ```
 
-### io.glob
-#### MGlobMatcher
+## io.glob
+### MGlobMatcher
 glob pattern matcher, M開頭代表 Mixin，包含 includes pattern 及 excludes pattern, 提供 isIncluded/isExcluded 方法，判定是否在這二者內，提供 isPermitted 方法判定是否只在 isIncluded 而沒有在 isExcluded 內. 
 
 ```dart
@@ -98,7 +98,7 @@ test('test GlobMatcher for validating whether a glob pattern is within '
   expect(yconfig.isPermitted('$expect_proot_gptn/lib/src/components/uiState/hello'), isFalse);
 });
 ```
-#### GlobPtnRectifier | [glob-test]
+### GlobPtnRectifier | [glob-test]
 將 glob pattern 轉成 absolute 同時考慮到 ../ ./ 這一類的操作
 1) Rewrite Miss-joined Path like
     - "e:/path/to/somewhere/../../skip/here" into
@@ -118,9 +118,9 @@ final r2 = GlobPtnRectifier(pth2);
 expect(r2.lastSegment, equals("src"));
 expect(r2.path, equals("$expect_proot_gptn/lib/src/*"));
 ```
-### io.util 
+## io.util 
 
-####  Path
+###  Path
 file path operation
 ```dart
 test('path join operation1', (){
@@ -140,9 +140,9 @@ test('path join operation1', (){
 });
 ```
 
-### io.simpleserver.dart [watch-test]
+## io.simpleserver.dart [watch-test]
 
-#### WatchServer
+### WatchServer
 ```dart
 WatchServer(
   String YAML_PTH, 
@@ -178,7 +178,7 @@ dwatcher
   ..watch();
 ```
 
-##### Example
+#### Example
 ```dart
 final ROOT     = Directory.current.path;
 final CURRENT  = io.Path.join(ROOT, 'test');
@@ -189,13 +189,13 @@ if (arguments.length == 1 && arguments[0] == '-directRun') {
   // await io.StaticServer().start();
 }
 ```
-#### FileArchiveServer
-#### StaticServer
+### FileArchiveServer
+### StaticServer
 
-### io.walk.dart [fileio-test]
+## io.walk.dart [fileio-test]
 
-#### DirectoryWatcher
-##### Example
+### DirectoryWatcher
+#### Example
 ```dart
 final dwatcher = DirectoryWatcher(dirs: dirs, config: yconfig)
   ..onFileModified((stream, file, [msg]){
@@ -212,8 +212,8 @@ final dwatcher = DirectoryWatcher(dirs: dirs, config: yconfig)
   })
   ..watch();
 ```
-#### DirectoryWalker
-##### Example
+### DirectoryWalker
+#### Example
 ```dart
 test('Test stream eventA - walking through directories by feeding stream event;'
     '\nLet predefined glob patterns fetching for right patterns and store it as '
@@ -285,7 +285,7 @@ test('Test stream eventA - walking through directories by feeding stream event;'
   } );
 ```
 
-### io.platform [platform-test]
+## io.platform [platform-test]
 支援 web/mobile
 ```dart
 export 'sketch/io.platform.loader.dart'
@@ -307,9 +307,9 @@ abstract class PlatformSketch{
 ```
 
 
-### io.yamlconfig.dart [yaml-test]
+## io.yamlconfig.dart [yaml-test]
 
-#### YamlConfig
+### YamlConfig
 
 
 

@@ -3,13 +3,13 @@ import 'dart:io';
 import 'dart:async';
 
 import 'package:IO/src/typedefs.dart';
+import 'package:common/common.dart' show FN;
 import 'package:test/test.dart';
 import 'package:path/path.dart' as path;
 
 import 'package:yaml/yaml.dart';
 import "package:glob/glob.dart";
 
-import 'package:common/src/common.dart';
 import 'package:IO/src/io.dart';
 import 'package:IO/src/io.codecs.dart';
 
@@ -116,13 +116,11 @@ void TestCase_fileIoTest([List<String>? arguments]) {
          await dumpMapToJSON(data, File(DUMP_PTH));
          await File(YAML_PTH).readAsString().then((str) {
             parsedYaml = loadYaml(str);
-            GP('[setUp yaml] - readingAsync', (_) {
-               print('$_ is read yaml a string? ${str is String}');
-               print('$_ parsed yaml is a Map? ${parsedYaml is Map}');
-               encode_json = json.encode(parsedYaml);
-               print('$_ is decoded yaml a string? ${encode_json is String}');
-               print('$_ is decoded yaml a Map? ${encode_json is Map}');
-            }, 1);
+            print('[setUp yaml] is read yaml a string? ${str is String}');
+            print('[setUp yaml] parsed yaml is a Map? ${parsedYaml is Map}');
+            encode_json = json.encode(parsedYaml);
+            print('[setUp yaml] is decoded yaml a string? ${encode_json is String}');
+            print('[setUp yaml] is decoded yaml a Map? ${encode_json is Map}');
             return loadYaml(str);
          });
          print(parsedYaml);
@@ -229,16 +227,13 @@ void TestCase_fileIoTest([List<String>? arguments]) {
       group('test YamlConfig for matching files and folders', () {
          setUpAll(() {});
          test('Testing folders for checking if its exists or not', () {
-            GP("show flatten path", (_) {
-               yconfig.variables.forEach((k, v) {
-                  v = GlobPtnRectifier(v).head.join(systemsep);
-                  var dir = Directory(v);
-                  var exists = dir.existsSync();
-                  print('$_ $k: $v ::$exists ::type: ${v.runtimeType}');
-               });
-               print('\n\n');
+            yconfig.variables.forEach((k, v) {
+               v = GlobPtnRectifier(v).head.join(systemsep);
+               var dir = Directory(v);
+               var exists = dir.existsSync();
+               print('  $k: $v ::$exists ::type: ${v.runtimeType}');
             });
-            ;
+            print('\n\n');
             var sourceExists = Directory(yconfig.settings.folders!['source']![0]).existsSync();
             expect(sourceExists, equals(true));
          });

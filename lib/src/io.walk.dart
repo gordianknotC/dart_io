@@ -8,11 +8,11 @@ import 'package:path/path.dart' as Path;
 
 import 'package:common/src/common.log.dart' show ELevel, Logger;
 import 'package:common/src/common.dart';
+import 'package:common/src/common.fn.dart';
 import 'package:IO/src/io.glob.dart';
 import 'package:IO/src/io.yamlconfig.dart';
 import 'package:IO/src/io.path.dart';
 
-final _log = Logger(name: "io.walk", levels: [ELevel.critical, ELevel.error, ELevel.warning, ELevel.debug]);
 
 class FileNotExistsError extends Error {
 	Object? message;
@@ -115,7 +115,7 @@ Future<TEntity> walkDir(Directory dir,
 		throw new Exception('$e\nType Cast Error, be sure to provide a specific '
 				'type as a generic type when using walkDir\n');
 	}
-	_log('\nwalkDir recursive:$recursive :');
+	print('\nwalkDir recursive:$recursive :');
 	
 	if (!dir.existsSync()) {
 		throw FileNotExistsError("dir not exists: ${dir.path}");
@@ -135,18 +135,18 @@ Future<TEntity> walkDir(Directory dir,
 			if (continuum == null || continuum(dir: dir, file: entity as File, subscription: subscription))
 				recorder!.files?.add(TFile(entity: entity));
 		}
-		_log('walkDir, onProgress ${entity.path}', ELevel.debug);
+		print('walkDir, onProgress ${entity.path}');
 	}, onDone: () {
 		var completed = 0;
 		var l = folders.length;
-		_log('walkDir process folders,  folders:$l, recursive:$recursive');
+		print('walkDir process folders,  folders:$l, recursive:$recursive');
 		if (l == 0 || recursive == true) {
 			return completer.complete(recorder);
 		};
 		void appendDone() {
 			completed += 1;
 			if (completed == l) {
-				_log('walkDir onDone!! recorder: $recorder');
+				print('walkDir onDone!! recorder: $recorder');
 				completer.complete(recorder);
 				subscription.cancel();
 			}
@@ -157,9 +157,9 @@ Future<TEntity> walkDir(Directory dir,
 			var _folder = folders[i];
 			var _recorder = recorder![_folder] as TEntity;
 			// determines weather to walk into directory or not
-			_log('prepare to walk on directory');
+			print('prepare to walk on directory');
 			if (continuum == null || continuum(dir: _folder as Directory, subscription: subscription) == true) {
-				_log('\twalk on Directory: ${_folder.path}', ELevel.debug);
+				print('\twalk on Directory: ${_folder.path}');
 				walkDir(_folder as Directory, recorder: _recorder,
 						symlink: symlink,
 						recursive: recursive,
@@ -291,7 +291,7 @@ class DirectoryWalker<T_config extends YamlConfig> {
          type TRet = Map<String, FileSystemEntity | TRet>
    */
 	Stream<TEntity> get dir_streams async* {
-		_log.debug('\t dirs to walk: $dirs_to_walk');
+		print('\t dirs to walk: $dirs_to_walk');
 		Iterable<Future<TEntity>>futures = dirs_to_walk.map((Directory dir) => walk(dir: dir));
 		try {
 			for (var future in futures) {
@@ -381,7 +381,7 @@ class DirectoryWalker<T_config extends YamlConfig> {
 		var ret = (file_patterns?.any((Glob glob) {
 			return glob.hasMatch(filename);
 		}) ?? false);
-		//_log.debug('path:$file_path, matched: $ret');
+		//print('path:$file_path, matched: $ret');
 		return ret;
 	}
 	
@@ -545,10 +545,10 @@ class DirectoryWatcher extends DirectoryWalker<YamlConfig> {
 	}
 	
 	watch() {
-		_log.debug('WATCH::');
+		print('WATCH::');
 		feed().listen((TEntity data) {
-			_log.debug('Initializing directories completed, start watching following directories for changes');
-			_log.debug('\tdirectories: ${data}; waiting for changes...');
+			print('Initializing directories completed, start watching following directories for changes');
+			print('\tdirectories: ${data}; waiting for changes...');
 			//_processFetchedValue(TEntity(entity: dirs_to_walk[1]));
 			_processFetchedValue(TEntity(entity: data.entity));
 		}, onDone: () {
@@ -561,27 +561,27 @@ class DirectoryWatcher extends DirectoryWalker<YamlConfig> {
 	void _processFetchedValue(TEntity entity) {
 		late StreamSubscription subscription;
 		if (entity.isDirectory) {
-			_log.debug('\twatch on path:${entity.entity.path}');
+			print('\twatch on path:${entity.entity.path}');
 			subscription = entity.entity.watch().listen((FileSystemEvent event) {
 				if (!event.isDirectory) {
 					var file = File(event.path);
 					var matched = isFileMatched(file.path);
-					if (matched) _log.debug('caught event: $event.path');
+					if (matched) print('caught event: $event.path');
 					switch (event.type) {
 						case FileSystemEvent.create:
-						//_log.debug('created: $matched');
+						//print('created: $matched');
 							if (matched) _onFileCreated?.call(subscription, file, true);
 							break;
 						case FileSystemEvent.modify:
-						//_log.debug('modified: $matched');
+						//print('modified: $matched');
 							if (matched) _onFileModified?.call(subscription, file);
 							break;
 						case FileSystemEvent.delete:
-						//_log.debug('deleted: $matched');
+						//print('deleted: $matched');
 							if (matched) _onFileDeleted?.call(subscription, file, true);
 							break;
 						case FileSystemEvent.move:
-						//_log.debug('moved: $matched');
+						//print('moved: $matched');
 							if (matched) _onFileMoved?.call(subscription, file, true);
 							break;
 					}

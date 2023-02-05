@@ -1,11 +1,10 @@
 import 'package:path/path.dart' as Path;
 import 'package:quiver/pattern.dart' as Q;
 import 'package:IO/src/io.path.dart' as io;
+import 'package:common/src/common.fn.dart';
 import 'package:common/src/common.log.dart';
 import 'dart:io' show Directory;
 import 'package:common/src/common.dart';
-
-final _log = Logger(name: "io.glob", levels: [ELevel.critical, ELevel.error, ELevel.warning, ELevel.debug]);
 
 
 /*
@@ -135,12 +134,12 @@ class GlobPtnRectifier {
 
    String closePath(String pth) {
       if (isEndsWithFolder(pth)) {
-         _log('lastSegment:$lastSegment, ispattern:${isPattern(lastSegment)}');
+         print('lastSegment:$lastSegment, ispattern:${isPattern(lastSegment)}');
          if (!isPattern(lastSegment))
             return '${pth}/*';
          return pth;
       }
-      _log('closed path: $pth, _sep:$_sep');
+      print('closed path: $pth, _sep:$_sep');
       return pth;
    }
 
@@ -203,7 +202,7 @@ class MGlobMatcher  {
    }){
       includes = includes_pattern.map((ptn) => Q.Glob(GlobPtnRectifier(ptn).path));
       excludes = excludes_pattern.map((ptn) => Q.Glob(GlobPtnRectifier(ptn).path));
-      _log('initialize Glob... \nincludes $includes', ELevel.debug);
+      print('initialize Glob... \nincludes $includes');
    }
    
    String _guard<T> (T folder){

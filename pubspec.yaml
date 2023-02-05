@@ -1,4 +1,6 @@
-name: IO
+name: dart_io
+publish_to: none
+repository: https://github.com/gordianknotC/dart_io.git
 description: A starting point for Dart libraries or applications.
 # version: 1.0.0
 # homepage: https://www.example.com
@@ -16,7 +18,9 @@ dependencies:
   http_server: 0.9.8    #simple http server
   rxdart: 0.22.0     #stream controller 0.20.0...
   common:
-    path: ../common
+    git:
+      url: https://github.com/gordianknotC/dart_common.git
+      ref: master
 
 dev_dependencies:
   test: ^1.0.0
