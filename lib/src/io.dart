@@ -1,22 +1,22 @@
 
-export 'package:IO/src/io.yamlconfig.dart' show
+export 'package:dart_io/src/io.yamlconfig.dart' show
    YamlConfig;
 
-export 'package:IO/src/io.glob.dart' show
+export 'package:dart_io/src/io.glob.dart' show
    GlobMatcher, GlobPtnRectifier, systemsep, globsep, contrasep, convertIntoGlobPath, convertIntoSystempath;
 
-export 'package:IO/src/io.path.dart' show
+export 'package:dart_io/src/io.path.dart' show
    rectifyPathSeparator, getScriptPath, dumpMapToJSON, getScriptUri, Path,
    readFileAsString, readFileAsStringSync, readJSONtoMap, yamlListToList, dump;
 
-export 'package:IO/src/io.walk.dart' show
+export 'package:dart_io/src/io.walk.dart' show
    DirectoryWalker, BaseStreamPublisher, BaseStreamReader,
    DirectoryWatcher, FileNotExistsError, walkDir;
 
-export 'package:IO/src/io.simpleserver.dart' show StaticServer, WatchServer, Events, FileEvent;
+export 'package:dart_io/src/io.simpleserver.dart' show StaticServer, WatchServer, Events, FileEvent;
 
-export 'package:IO/src/io.cmd.dart' show Shell;
-export 'package:IO/src/typedefs.dart';
+export 'package:dart_io/src/io.cmd.dart' show Shell;
+export 'package:dart_io/src/typedefs.dart';
 
 
 //@fmt:on

@@ -2,16 +2,16 @@ import 'dart:io' show Directory, File, FileSystemEntity, FileSystemEvent, Platfo
 import 'dart:async' show Stream, StreamController;
 import 'dart:async' show Completer, StreamTransformer, EventSink, StreamSubscription;
 
-import 'package:IO/src/typedefs.dart';
+import 'package:dart_io/src/typedefs.dart';
 import 'package:quiver/pattern.dart';
 import 'package:path/path.dart' as Path;
 
-import 'package:common/src/common.log.dart' show ELevel, Logger;
-import 'package:common/src/common.dart';
-import 'package:common/src/common.fn.dart';
-import 'package:IO/src/io.glob.dart';
-import 'package:IO/src/io.yamlconfig.dart';
-import 'package:IO/src/io.path.dart';
+import 'package:dart_common/src/common.log.dart' show ELevel, Logger;
+import 'package:dart_common/src/common.dart';
+import 'package:dart_common/src/common.fn.dart';
+import 'package:dart_io/src/io.glob.dart';
+import 'package:dart_io/src/io.yamlconfig.dart';
+import 'package:dart_io/src/io.path.dart';
 
 
 class FileNotExistsError extends Error {

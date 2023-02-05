@@ -2,8 +2,8 @@ import 'dart:io' show File;
 import 'package:yaml/yaml.dart' show YamlList, YamlMap, loadYaml;
 
 //import 'package:path/path.dart' as Path;
-import 'package:IO/src/io.path.dart';
-import 'package:IO/src/io.glob.dart';
+import 'package:dart_io/src/io.path.dart';
+import 'package:dart_io/src/io.glob.dart';
 
 /*
 -------------------------------------------------

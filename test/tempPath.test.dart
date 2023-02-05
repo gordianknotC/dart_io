@@ -1,7 +1,7 @@
 
 
 import 'package:test/test.dart';
-import 'package:IO/src/io.path.dart' show Path;
+import 'package:dart_io/src/io.path.dart' show Path;
 
 
 

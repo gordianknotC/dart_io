@@ -1,9 +1,9 @@
 // import 'dart:io';
 //
-// import 'package:common/common.dart';
+// import 'package:dart_common/dart_common.dart';
 // import 'package:test/test.dart';
-// import 'package:IO/src/io.path.dart' show Path, getScriptPath;
-// import 'package:common/common.dart';
+// import 'package:dart_io/src/io.path.dart' show Path, getScriptPath;
+// import 'package:dart_common/dart_common.dart';
 //
 //
 // final base = '${getScriptPath(Platform.script)}/io_logger_test';

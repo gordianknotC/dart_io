@@ -1,11 +1,11 @@
 import 'dart:io';
 
 import 'package:test/test.dart';
-import 'package:IO/src/io.yamlconfig.dart';
-import 'package:IO/src/io.path.dart' show Path, getScriptPath;
+import 'package:dart_io/src/io.yamlconfig.dart';
+import 'package:dart_io/src/io.path.dart' show Path, getScriptPath;
 import 'package:yaml/yaml.dart' show loadYaml;
 import 'io.yamlconfig.test.dart' show CURRENT, DATA;
-import 'package:IO/src/io.codecs.dart';
+import 'package:dart_io/src/io.codecs.dart';
 
 final base = '${getScriptPath(Platform.script)}/io_codec_test';
 

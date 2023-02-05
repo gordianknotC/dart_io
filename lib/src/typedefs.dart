@@ -1,7 +1,7 @@
 import 'dart:io' show Directory, File, FileSystemEntity, FileSystemEvent, Platform;
 import 'dart:async' show Completer, StreamTransformer, EventSink, StreamSubscription;
 
-import 'package:IO/src/io.dart';
+import 'package:dart_io/src/io.dart';
 import 'package:meta/meta.dart';
 import 'package:path/path.dart' as _Path;
 

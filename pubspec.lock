@@ -56,14 +56,7 @@ packages:
       name: colorize
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.0.0"
-  common:
-    dependency: "direct main"
-    description:
-      path: "../common"
-      relative: true
-    source: path
-    version: "0.0.0"
+    version: "3.0.0"
   convert:
     dependency: transitive
     description:
@@ -85,6 +78,15 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.14.6"
+  dart_common:
+    dependency: "direct main"
+    description:
+      path: "."
+      ref: master
+      resolved-ref: "749390ca8bdad096840fb91db70fc56958a4e984"
+      url: "https://github.com/gordianknotC/dart_common.git"
+    source: git
+    version: "0.0.1"
   front_end:
     dependency: transitive
     description:
@@ -162,6 +164,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.3.9"
+  logger:
+    dependency: transitive
+    description:
+      name: logger
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.0"
   logging:
     dependency: transitive
     description:
@@ -266,7 +275,7 @@ packages:
       name: rxdart
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.22.0"
+    version: "0.17.0"
   shelf:
     dependency: transitive
     description:

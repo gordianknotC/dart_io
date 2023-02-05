@@ -2,16 +2,16 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:async';
 
-import 'package:IO/src/typedefs.dart';
-import 'package:common/common.dart' show FN;
+import 'package:dart_io/src/typedefs.dart';
+import 'package:dart_common/dart_common.dart' show FN;
 import 'package:test/test.dart';
 import 'package:path/path.dart' as path;
 
 import 'package:yaml/yaml.dart';
 import "package:glob/glob.dart";
 
-import 'package:IO/src/io.dart';
-import 'package:IO/src/io.codecs.dart';
+import 'package:dart_io/src/io.dart';
+import 'package:dart_io/src/io.codecs.dart';
 
 //@fmt:off
 const expect_project_root = "E:\\MyDocument\\Dart\\myPackages\\IO";

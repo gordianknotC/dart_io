@@ -1,10 +1,10 @@
 import 'package:path/path.dart' as Path;
 import 'package:quiver/pattern.dart' as Q;
-import 'package:IO/src/io.path.dart' as io;
-import 'package:common/src/common.fn.dart';
-import 'package:common/src/common.log.dart';
+import 'package:dart_io/src/io.path.dart' as io;
+import 'package:dart_common/src/common.fn.dart';
+import 'package:dart_common/src/common.log.dart';
 import 'dart:io' show Directory;
-import 'package:common/src/common.dart';
+import 'package:dart_common/src/common.dart';
 
 
 /*

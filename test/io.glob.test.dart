@@ -1,8 +1,8 @@
 
-import 'package:IO/src/io.glob.dart';
+import 'package:dart_io/src/io.glob.dart';
 import 'package:test/test.dart';
-import 'package:IO/src/io.yamlconfig.dart';
-import 'package:IO/src/io.path.dart' show Path;
+import 'package:dart_io/src/io.yamlconfig.dart';
+import 'package:dart_io/src/io.path.dart' show Path;
 import 'package:yaml/yaml.dart' show  loadYaml;
 import 'io.yamlconfig.test.dart' show CURRENT, DATA;
 

@@ -3,7 +3,7 @@ import 'dart:async' show Future;
 import 'dart:io' show File;
 import 'dart:convert' show json;
 import 'package:path/path.dart' as NPath;
-import 'package:IO/src/io.glob.dart' as Glob;
+import 'package:dart_io/src/io.glob.dart' as Glob;
 
 //final _log = _.Logger(name: "io", levels: [_.ELevel.critical, _.ELevel.error, _.ELevel.warning]);
 

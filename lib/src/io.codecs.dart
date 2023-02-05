@@ -5,7 +5,7 @@ import 'dart:typed_data';
 import 'package:archive/archive.dart';
 import 'package:tripledes/tripledes.dart';
 import 'package:path/path.dart' as Path;
-import 'package:IO/src/io.path.dart';
+import 'package:dart_io/src/io.path.dart';
 
 
 const BASE_KEY = 'crypto';

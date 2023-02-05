@@ -1,15 +1,15 @@
 import 'dart:io';
 import 'dart:async';
 
-import 'package:IO/src/io.cmd.dart';
-import 'package:IO/src/io.codecs.dart';
-import 'package:IO/src/typedefs.dart';
+import 'package:dart_io/src/io.cmd.dart';
+import 'package:dart_io/src/io.codecs.dart';
+import 'package:dart_io/src/typedefs.dart';
 import 'package:yaml/yaml.dart';
 import 'package:http_server/http_server.dart';
 import 'package:path/path.dart';
-import 'package:IO/src/io.yamlconfig.dart';
-import 'package:IO/src/io.path.dart';
-import 'package:IO/src/io.walk.dart';
+import 'package:dart_io/src/io.yamlconfig.dart';
+import 'package:dart_io/src/io.path.dart';
+import 'package:dart_io/src/io.walk.dart';
 import 'package:rxdart/rxdart.dart' show BehaviorSubject;
 
 enum Events{

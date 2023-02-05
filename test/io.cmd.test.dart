@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:test/test.dart';
-import 'package:IO/src/io.cmd.dart';
+import 'package:dart_io/src/io.cmd.dart';
 
 void TestCase_ShellTest() {
    late Shell shell;
