@@ -82,7 +82,7 @@ packages:
     dependency: "direct main"
     description:
       path: "."
-      ref: master
+      ref: HEAD
       resolved-ref: "749390ca8bdad096840fb91db70fc56958a4e984"
       url: "https://github.com/gordianknotC/dart_common.git"
     source: git

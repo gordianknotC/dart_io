@@ -20,7 +20,7 @@ dependencies:
   dart_common:
     git:
       url: https://github.com/gordianknotC/dart_common.git
-      ref: master
+      ref: HEAD
 
 dev_dependencies:
   test: ^1.0.0
