@@ -2,6 +2,7 @@ name: dart_io
 publish_to: none
 repository: https://github.com/gordianknotC/dart_io.git
 description: A starting point for Dart libraries or applications.
+version: 0.0.1
 # version: 1.0.0
 # homepage: https://www.example.com
 # author: gordianknot <email@example.com>
