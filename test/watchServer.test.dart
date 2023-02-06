@@ -1,7 +1,7 @@
 import 'dart:async';
 import "dart:io";
 
-import 'package:dart_io/src/io.dart' as io;
+import 'package:dart_io/dart_io.dart' as io;
 
 
 void main([arguments]) async {

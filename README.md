@@ -265,7 +265,7 @@ test('Test stream eventA - walking through directories by feeding stream event;'
         expect(src.keys, unorderedEquals([
           'File: io.cmd.dart',
           'File: io.codecs.dart',
-          'File: io.dart',
+          'File: dart_io.dart',
           'File: io.glob.dart',
           'File: io.simpleserver.dart',
           'File: io.path.dart',

@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'package:dart_io/src/io.dart';
+import 'package:dart_io/dart_io.dart';
 import 'package:meta/meta.dart';
 import 'package:rxdart/rxdart.dart' show BehaviorSubject;
 

@@ -10,7 +10,7 @@ import 'package:path/path.dart' as path;
 import 'package:yaml/yaml.dart';
 import "package:glob/glob.dart";
 
-import 'package:dart_io/src/io.dart';
+import 'package:dart_io/dart_io.dart';
 import 'package:dart_io/src/io.codecs.dart';
 
 //@fmt:off
@@ -413,7 +413,7 @@ void TestCase_fileIoTest([List<String>? arguments]) {
             'IO.dart',
          ];
          src_files = [
-            'io.codecs.dart', 'io.dart', 'io.simpleserver.dart'
+            'io.codecs.dart', 'dart_io.dart', 'io.simpleserver.dart'
             'io.glob.dart','io.path.dart', 'io.walk.dart', 'io.yamlconfig.dart'
          ];
          dirs = [
@@ -499,7 +499,7 @@ void TestCase_fileIoTest([List<String>? arguments]) {
                expect(src.keys, unorderedEquals([
                   'File: io.cmd.dart',
                   'File: io.codecs.dart',
-                  'File: io.dart',
+                  'File: dart_io.dart',
                   'File: io.glob.dart',
                   'File: io.simpleserver.dart',
                   'File: io.path.dart',
@@ -565,7 +565,7 @@ void TestCase_fileIoTest([List<String>? arguments]) {
                'IO.dart',
             ];
             src_files = [
-               'io.codecs.dart', 'io.dart', 'io.simpleserver.dart',
+               'io.codecs.dart', 'dart_io.dart', 'io.simpleserver.dart',
                'io.glob.dart','io.path.dart', 'io.walk.dart', 'io.yamlconfig.dart'
             ];
             dirs = [

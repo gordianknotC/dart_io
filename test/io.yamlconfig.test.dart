@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:test/test.dart';
-import 'package:dart_io/src/io.dart' as io;
+import 'package:dart_io/dart_io.dart' as io;
 import 'package:dart_io/src/io.yamlconfig.dart';
 
 import 'package:yaml/yaml.dart' show   loadYaml;
