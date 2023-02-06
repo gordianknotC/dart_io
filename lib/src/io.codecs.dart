@@ -68,21 +68,18 @@ const DEFAULT_ENCRYPT_KEY = 'XYZDefault';
 /// 1) 以 [BlockCipher] 加密解密
 /// 2) 加密後壓縮 | 解壓縮後解密
 class Crypto {
-   static List<int>
-   toBytes(String source) {
+   static List<int> toBytes(String source) {
       return utf8.encode(source);
    }
    
    static XtoY(Encoding x, Codec y, String source){
       return x.fuse(y as dynamic).encode(source);
    }
-   static String
-   utf8ToBase64(String source) {
+   static String utf8ToBase64(String source) {
       return utf8.fuse(base64).encode(source);
    }
    
-   static String
-   base64ToUtf8(String source) {
+   static String base64ToUtf8(String source) {
       return utf8.fuse(base64).decode(source);
    }
    

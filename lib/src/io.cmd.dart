@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:dart_io/dart_io.dart';
-import 'package:meta/meta.dart';
 import 'package:rxdart/rxdart.dart' show BehaviorSubject;
 
 final _ENV_NODE = Platform.isWindows ? 'NODE_PATH' : 'PATH',
@@ -10,6 +9,11 @@ final _ENV_NODE = Platform.isWindows ? 'NODE_PATH' : 'PATH',
       _ENV_PATH = Platform.isWindows ? 'Path' : 'PATH',
       _ESEP     = Platform.isWindows ? ';' : ':';
 
+///
+/// [node_path] - 取得 node path
+/// [dart_sdk] - 取得 dart sdk
+/// [path] - 取得 PATH
+///
 class CommonEnv {
    Map<String, String> env = {};
    
@@ -68,6 +72,7 @@ class CommonEnv {
 }
 
 class CmdEvent{
+   ///
    String   name;
    String?   data;
    bool     is_stdin;
@@ -84,7 +89,18 @@ class CmdEvent{
       this.error
    });
 }
-
+///
+/// ### Example
+/// ```dart
+/// shell.input('dir');
+/// shell.std_stream.listen((cmd){
+///     if (cmd.name != 'dir' || cmd.ext_code == 0) return;
+///     final data = cmd.data;
+///     print('dir:\n${data}');
+///     expect(data, isNotEmpty);
+/// });
+/// ```
+///
 class Shell{
    CommonEnv env;
    StreamController<CmdEvent>? _controller = BehaviorSubject<CmdEvent>();

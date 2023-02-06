@@ -46,16 +46,7 @@ final rsep = sep == r'\'
            ? r'/'
            : r'\';
 
-/*
----------------------------------------------
-
-
-                 File IO utils              ;
----------------------------------------------
-for reading/writing files from/into Yaml/Json
----------------------------------------------
-*/
-
+/// dump string to file
 Future<String> dump(String data, File path) {
    return path.exists().then((exists) {
       Future<String> write(File file) {
@@ -71,6 +62,7 @@ Future<String> dump(String data, File path) {
    });
 }
 
+/// dump Map object to file
 Future<Map> dumpMapToJSON(Map<String, dynamic> data, File path) {
    return path.exists().then((exists) {
       var JSON = json.encode(data);
@@ -114,6 +106,7 @@ Future<Map> readJSONtoMap(File path) {
 }
 
 
+/// combine file path with separator
 String combinePath(String path, String sep){
    var paths = path.split(sep);
    var new_paths = [];
@@ -134,6 +127,7 @@ String combinePath(String path, String sep){
    return new_paths.join(sep);
 }
 
+/// replace unix/windows file path separator with system recognizable one
 String rectifyPathSeparator(String path) {
    //orig:  if (!path.contains(sep))
    if (path.contains(rsep))
@@ -142,11 +136,12 @@ String rectifyPathSeparator(String path) {
    //return combinePath(path, sep);
 }
 
-/*
-   get current script path, no matter where the project root is.
-   EX:
-      getScriptPath(Platform.script)
-*/
+///
+/// get current script path, no matter where the project root is.
+/// EX:
+/// ``` dart
+/// getScriptPath(Platform.script)
+/// ```
 String getScriptPath(Uri uri, [String? script_name]) {
    if (script_name == null)
       return rectifyPathSeparator(

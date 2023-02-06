@@ -83,7 +83,7 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: "749390ca8bdad096840fb91db70fc56958a4e984"
+      resolved-ref: "621d5d100642e87cb703ab1cee93e39781c3a937"
       url: "https://github.com/gordianknotC/dart_common.git"
     source: git
     version: "0.0.1"
