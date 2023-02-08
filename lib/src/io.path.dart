@@ -169,8 +169,8 @@ class Path {
    static String join(String a, String b, [String? c]){
       //print('join a: $a, b:$b');
       return combinePath(NPath.join(
-         rectifyPath(a),
-         rectifyPath(b),
+         rectifyPath(a)!,
+         rectifyPath(b)!,
          rectifyPath(c)
       ), sep);
    }
@@ -184,7 +184,7 @@ class Path {
          if (!a.endsWith(ext))
             return rectifyPath(a)!;
       }
-      return NPath.dirname(rectifyPath(a));
+      return NPath.dirname(rectifyPath(a)!);
    }
    
    static Uri toUri(String a){

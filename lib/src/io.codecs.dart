@@ -84,12 +84,12 @@ class Crypto {
    }
    
    static String compress(String source, {bool encrypt = false}) {
-      List<int> gzip_bytes, string_bytes;
+      List<int>? gzip_bytes, string_bytes;
       string_bytes = utf8.encode(source);
       gzip_bytes = GZipEncoder().encode(string_bytes);
       if (!encrypt)
-         return base64.encode(gzip_bytes);
-      return Crypto.encrypt(base64.encode(gzip_bytes), DEFAULT_ENCRYPT_KEY);
+         return base64.encode(gzip_bytes!);
+      return Crypto.encrypt(base64.encode(gzip_bytes!), DEFAULT_ENCRYPT_KEY);
    }
    
    static String decompress(String source, {bool encrypt = false}) {

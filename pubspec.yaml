@@ -11,13 +11,13 @@ environment:
   sdk: '>=2.12.0 <3.0.0'
 
 dependencies:
-  quiver: 2.0.0+1  #collection utilities
-  path: 1.6.2    #file system path
-  yaml: 2.1.15   #yaml
-  archive: 2.0.4    #compression utility
+  quiver: ^3.2.1  #collection utilities
+  path: ^1.8.3    #file system path
+  yaml: ^3.1.1   #yaml
+  archive: ^3.3.6    #compression utility
   tripledes: ^2.1.0    #encryption / decryption
-  http_server: 0.9.8    #simple http server
-  rxdart: 0.17.0     #stream controller 0.20.0...
+  http_server: ^1.0.0    #simple http server
+  rxdart: ^0.27.7     #stream controller 0.20.0...
   dart_common:
     git:
       url: https://github.com/gordianknotC/dart_common.git

@@ -229,7 +229,7 @@ class StaticServer{
    
    StaticServer({String? rootPath}){
       this.rootPath = rootPath ?? join(dirname(Platform.script.toFilePath()));
-      this.root     = VirtualDirectory(rootPath);
+      this.root     = VirtualDirectory(rootPath!);
    }
    
    String getRequestPath(HttpRequest req){
